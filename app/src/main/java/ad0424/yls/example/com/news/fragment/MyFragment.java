@@ -30,6 +30,10 @@ public class MyFragment extends Fragment {
     public MyFragment(RefreshDataListener mRefreshDataListener) {
         this.mRefreshDataListener = mRefreshDataListener;
     }
+
+    public MyFragment(){
+
+    }
 //    public static final String ARGS_PAGE = "args_page";
 //    private int mPage;
 //
