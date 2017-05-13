@@ -6,7 +6,7 @@ import java.util.List;
  * Created by yls on 2017/5/16.
  */
 
-public class GuoNeiBeanList {
+public class NewsBeanList {
 
     /**
      * reason : 成功的返回

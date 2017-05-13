@@ -1,37 +1,53 @@
 package ad0424.yls.example.com.news.activity;
 
-import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
+import com.special.ResideMenu.ResideMenu;
+import com.special.ResideMenu.ResideMenuItem;
 
 import java.util.ArrayList;
 
 import ad0424.yls.example.com.news.R;
 import ad0424.yls.example.com.news.adapter.MyFragmentAdapter;
 import ad0424.yls.example.com.news.fragment.MyFragment;
-import ad0424.yls.example.com.news.listener.RefreshDataListener;
-import ad0424.yls.example.com.news.model.GuoNeiBeanList;
-import okhttp3.Call;
+import ad0424.yls.example.com.news.utils.SPUtil;
 
-public class MainActivity extends AppCompatActivity implements RefreshDataListener{
+
+public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private ArrayList<MyFragment> mMyFragmentArrayList = new ArrayList<MyFragment>();
     private ArrayList<String> mTitleList = new ArrayList<String>();
-    private Gson mGson = new Gson();
-    private GuoNeiBeanList list = new GuoNeiBeanList();
-    private ProgressDialog mProgressDialog;
     private MyFragmentAdapter adapter;
-    private String newsType;
+    private final String NEWS_TYPE = "NEWS_TYPE";
+    private final String NEWS_GUONEI = "国内";
+    private final String NEWS_GUOJI = "国际";
+    private final String NEWS_YULE = "娱乐";
+    private final String NEWS_TIYU = "体育";
+    private final String NEWS_TOP = "头条";
+    private ResideMenu resideMenu;
+    private Toolbar mToolbar;
+    private boolean isNight;
+    private String[] items = {"超大号字体", "大号字体", "正常字体", "小号字体", "超小号字体"};
+    private int textSize;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
         initTitle();
         initFragment();
@@ -40,21 +56,55 @@ public class MainActivity extends AppCompatActivity implements RefreshDataListen
 
     }
 
+    private void initChooseTextSize() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("设置字体");
+
+        builder.setSingleChoiceItems(items, SPUtil.getTextSize(MainActivity.this), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                textSize = which;
+            }
+        });
+
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SPUtil.setTestSize(MainActivity.this, textSize);
+            }
+        });
+
+        builder.setNegativeButton("取消", null);
+        builder.show();
+    }
+
+
     private void initFragment() {
-        MyFragment f1 = new MyFragment(MainActivity.this);
-        //  f1.setTitle("头条页面");
+        Bundle bundleTop = new Bundle();
+        bundleTop.putString(NEWS_TYPE, NEWS_TOP);
+        MyFragment f1 = new MyFragment();
+        f1.setArguments(bundleTop);
 
-        MyFragment f2 = new MyFragment(MainActivity.this);
-        // f2.setTitle("国内页面");
+        Bundle bundleGuonei = new Bundle();
+        bundleGuonei.putString(NEWS_TYPE, NEWS_GUONEI);
+        MyFragment f2 = new MyFragment();
+        f2.setArguments(bundleGuonei);
 
-        MyFragment f3 = new MyFragment(MainActivity.this);
-        //  f3.setTitle("国际页面");
+        Bundle bundleGuoji = new Bundle();
+        bundleGuoji.putString(NEWS_TYPE, NEWS_GUOJI);
+        MyFragment f3 = new MyFragment();
+        f3.setArguments(bundleGuoji);
 
-        MyFragment f4 = new MyFragment(MainActivity.this);
-        //  f4.setTitle("体育页面");
+        Bundle bundleTiyu = new Bundle();
+        bundleTiyu.putString(NEWS_TYPE, NEWS_TIYU);
+        MyFragment f4 = new MyFragment();
+        f4.setArguments(bundleTiyu);
 
-        MyFragment f5 = new MyFragment(MainActivity.this);
-        //  f5.setTitle("娱乐页面");
+        Bundle bundleYule = new Bundle();
+        bundleYule.putString(NEWS_TYPE, NEWS_YULE);
+        MyFragment f5 = new MyFragment();
+        f5.setArguments(bundleYule);
+
         mMyFragmentArrayList.add(f1);
         mMyFragmentArrayList.add(f2);
         mMyFragmentArrayList.add(f3);
@@ -82,89 +132,101 @@ public class MainActivity extends AppCompatActivity implements RefreshDataListen
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
-        mProgressDialog = new ProgressDialog(MainActivity.this);
-        mProgressDialog.setTitle("温馨提示");
-        mProgressDialog.setMessage("数据加载中······");
-        mProgressDialog.setCancelable(false);
-        getContent("头条");
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                /**
-                 * 当tab第一次选择时候调用
-                 * @param tab
-                 */
-                newsType = tab.getText().toString();
-
-                //  Toast.makeText(MainActivity.this, "当tab第一次选择时候调用", Toast.LENGTH_SHORT).show();
-                 Log.i("aaaaaaaaaa", "onTabSelected: " + tab.getText());
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                /**
-                 * 当tab从 选择 ->未选择
-                 * @param tab
-                 */
-//                Toast.makeText(MainActivity.this, "当tab从 选择 ->未选择", Toast.LENGTH_SHORT).show();
-//                Log.i("aaaaaaaaaa", "onTabUnselected: " + tab.getText());
-                getContent(tab.getText().toString());
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                /**
-                 * 当tab已是选择状态时，继续点击调用此方法
-                 * @param tab
-                 */
-//                Toast.makeText(MainActivity.this, "当tab已是选择状态时，继续点击调用此方法", Toast.LENGTH_SHORT).show();
-//                Log.i("aaaaaaaaaa", "onTabReselected: " + tab.getText());
-
-            }
-        });
-    }
-
-    private void getContent(String text) {
-        if (text.equals("国内")) {
-            mProgressDialog.show();
-            getNews("guonei", 1);
-        } else if (text.equals("头条")) {
-            mProgressDialog.show();
-            getNews("toutiao", 0);
-        } else if (text.equals("国际")) {
-            mProgressDialog.show();
-            getNews("guoji", 2);
-        } else if (text.equals("体育")) {
-            mProgressDialog.show();
-            getNews("tiyu", 3);
-        } else {
-            mProgressDialog.show();
-            getNews("yule", 4);
+        initResideMenu();
+        mToolbar = (Toolbar) findViewById(R.id.main_bar);
+        setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.mipmap.title_bar_menu_on);
         }
+
+
     }
 
-    private void getNews(String type, final int index) {
-        OkHttpUtils.post().url("http://v.juhe.cn/toutiao/index?type=" + type + "&key=94a708ce50a14d68605a70670f8cd831")
-                .build().execute(new StringCallback() {
-            @Override
-            public void onError(Call call, Exception e, int id) {
+    private void initResideMenu() {
 
-            }
+        resideMenu = new ResideMenu(this);
+        resideMenu.setBackground(R.mipmap.bg_love);
+        resideMenu.attachToActivity(this);
+        final String titles[] = {"个人中心", "收藏", "夜间模式", "设置"};
+        int icon[] = {R.mipmap.persion, R.drawable.collect, R.mipmap.night, R.mipmap.setting};
 
+        ResideMenuItem personItem = new ResideMenuItem(this, icon[0], titles[0]);
+        personItem.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(String response, int id) {
-                Log.i("aaaaaa", "onResponse: " + response.toString());
-                list = mGson.fromJson(response.toString(), GuoNeiBeanList.class);
-                mMyFragmentArrayList.get(index).setContent(list);
-                adapter.notifyDataSetChanged();
-                mProgressDialog.dismiss();
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "person", Toast.LENGTH_SHORT).show();
             }
         });
+        resideMenu.addMenuItem(personItem, ResideMenu.DIRECTION_LEFT);
+
+        ResideMenuItem collectItem = new ResideMenuItem(this, icon[1], titles[1]);
+        collectItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
+                startActivity(intent);
+            }
+        });
+        resideMenu.addMenuItem(collectItem, ResideMenu.DIRECTION_LEFT);
+
+        ResideMenuItem nightItem = new ResideMenuItem(this, icon[2], titles[2]);
+        nightItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isNight = SPUtil.getIsNight(MainActivity.this);
+                Toast.makeText(MainActivity.this, isNight + "", Toast.LENGTH_SHORT).show();
+                if (isNight) {
+                    SPUtil.updateIsNight(MainActivity.this, false);
+                    getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    //  recreate();
+                } else {
+                    SPUtil.updateIsNight(MainActivity.this, true);
+                    getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    //recreate();
+                }
+
+
+            }
+        });
+        resideMenu.addMenuItem(nightItem, ResideMenu.DIRECTION_LEFT);
+
+        ResideMenuItem settingItem = new ResideMenuItem(this, icon[3], titles[3]);
+        settingItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initChooseTextSize();
+            }
+        });
+
+        resideMenu.addMenuItem(settingItem, ResideMenu.DIRECTION_LEFT);
+        resideMenu.addIgnoredView(mViewPager);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_toobar, menu);
+        return true;
     }
 
     @Override
-    public void refreshData() {
-        getContent(newsType);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                resideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
+                break;
+            case R.id.search:
+
+                break;
+
+        }
+        return true;
     }
+
+
 }
+
+
+

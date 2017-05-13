@@ -10,6 +10,10 @@ import android.content.SharedPreferences;
 public class SPUtil {
     private static final String FIRST_SP = "FIRST_SP";
     private static final String FIRST_RUN = "FIRST_RUN";
+    private static final String ISNIGHT_SP = "ISNIGHT_SP";
+    private static final String IS_NIGHT = "IS_NIGHT";
+    private static final String TEST_SIZE_SP = "TEST_SIZE_SP";
+    private static final String TEST_SIZE = "TEST_SIZE";
 
     public static boolean getIsFirstRun(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(FIRST_SP,Context.MODE_PRIVATE);
@@ -22,4 +26,38 @@ public class SPUtil {
         editor.putBoolean(FIRST_RUN,isRuned);
         editor.commit();
     }
+
+    public static boolean getIsNight(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(ISNIGHT_SP,Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(IS_NIGHT,true);
+    }
+
+    public static void setIsNight(Context context, boolean isRuned){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(ISNIGHT_SP,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(IS_NIGHT,isRuned);
+        editor.commit();
+    }
+
+    public static void updateIsNight(Context context, boolean isRuned){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(ISNIGHT_SP,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(IS_NIGHT);
+        editor.putBoolean(IS_NIGHT,isRuned);
+        editor.commit();
+    }
+
+
+    public static int getTextSize(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(TEST_SIZE_SP,Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(TEST_SIZE,2);
+    }
+
+    public static void setTestSize(Context context, int textSize){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(TEST_SIZE_SP,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(TEST_SIZE,textSize);
+        editor.commit();
+    }
+
 }

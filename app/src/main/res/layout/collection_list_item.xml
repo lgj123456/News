@@ -5,24 +5,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="50dp"
+    android:layout_marginBottom="10dp"
     android:orientation="horizontal"
-    android:layout_marginBottom="5dp"
     tools:context="ad0424.yls.example.com.news.activity.MainActivity">
 
     <ImageView
+        android:id="@+id/iv_collection_title"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginLeft="3dp"
-        android:id="@+id/iv_title"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
         android:scaleType="centerCrop"
         />
 
     <TextView
-        android:id="@+id/tv_content"
-        android:layout_width="match_parent"
+        android:id="@+id/tv_collection_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_marginLeft="5dp"
+        android:layout_weight="2"
+        />
+
+    <TextView
+        android:id="@+id/tv_collection_time"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
         android:layout_gravity="center_vertical"
         />
 
