@@ -1,13 +1,13 @@
 package ad0424.yls.example.com.news.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ad0424.yls.example.com.news.R;
+import ad0424.yls.example.com.news.activity.BrowerNewsActivity;
+import ad0424.yls.example.com.news.application.MyApplication;
 import ad0424.yls.example.com.news.model.CollectBean;
 
 /**
@@ -22,9 +24,10 @@ import ad0424.yls.example.com.news.model.CollectBean;
  */
 
 public class MyCollectionAdapter extends BaseAdapter {
-    private  List<CollectBean> mCollectBeen = new ArrayList<>();
+    private List<CollectBean> mCollectBeen = new ArrayList<>();
     private Context mContext;
-    public MyCollectionAdapter(List<CollectBean> collectBeen,Context mContext) {
+
+    public MyCollectionAdapter(List<CollectBean> collectBeen, Context mContext) {
         this.mCollectBeen = collectBeen;
         this.mContext = mContext;
     }
@@ -58,17 +61,25 @@ public class MyCollectionAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        CollectBean collectBean = mCollectBeen.get(position);
+        final CollectBean collectBean = mCollectBeen.get(position);
         viewHolder.mTvTitie.setText(collectBean.getTitle());
         viewHolder.mTvCollectionTime.setText(collectBean.getCollectTime());
-        Toast.makeText(mContext, collectBean.getCollectTime(), Toast.LENGTH_SHORT).show();
+        final View finalConvertView = convertView;
+        viewHolder.mTvTitie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MyApplication.getContext(), BrowerNewsActivity.class);
+                intent.putExtra("url", collectBean.getContentUrl());
+                finalConvertView.getContext().startActivity(intent);
+            }
+        });
         Glide.with(viewHolder.mIvTitle.getContext()).load(collectBean.getImgUrl()).into(viewHolder.mIvTitle);
 
         return convertView;
     }
 
     public void changeData(List<CollectBean> collectBeen) {
-       this.mCollectBeen = collectBeen;
+        this.mCollectBeen = collectBeen;
         notifyDataSetChanged();
     }
 

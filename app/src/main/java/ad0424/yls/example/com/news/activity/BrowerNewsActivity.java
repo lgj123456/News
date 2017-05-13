@@ -34,6 +34,7 @@ import java.util.Date;
 import ad0424.yls.example.com.news.R;
 import ad0424.yls.example.com.news.utils.BmobUtil;
 import ad0424.yls.example.com.news.utils.SPUtil;
+import cn.bmob.v3.BmobUser;
 
 public class BrowerNewsActivity extends AppCompatActivity {
     private WebView mWebView;
@@ -56,6 +57,7 @@ public class BrowerNewsActivity extends AppCompatActivity {
     private String imgUrl;
     private WebSettings settings;
     private int textSize;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +94,7 @@ public class BrowerNewsActivity extends AppCompatActivity {
         Toast.makeText(this, "" + isNight, Toast.LENGTH_SHORT).show();
         mWebView.setDayOrNight(isNight);
         mWebView.loadUrl(url);
-         settings = mWebView.getSettings();
+        settings = mWebView.getSettings();
         mToolbar = (Toolbar) findViewById(R.id.news_bar);
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -107,18 +109,33 @@ public class BrowerNewsActivity extends AppCompatActivity {
         mBtnWriteComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mEdtComment.getText().toString() != null) {
-                    mComment = mEdtComment.getText().toString().trim();
+                if (BmobUser.getCurrentUser() == null) {
+                    Intent intent = new Intent(BrowerNewsActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+
+                    if (mEdtComment.getText().toString() != null) {
+                        mComment = mEdtComment.getText().toString().trim();
+                    }
+                    sendComment();
                 }
-                sendComment();
             }
         });
 
         mBtnComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(BrowerNewsActivity.this, CommentActivity.class);
-                startActivity(intent);
+                if (BmobUser.getCurrentUser() == null) {
+                    Intent intent = new Intent(BrowerNewsActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(BrowerNewsActivity.this, CommentActivity.class);
+                    startActivity(intent);
+                }
+
+
             }
         });
 
@@ -127,10 +144,10 @@ public class BrowerNewsActivity extends AppCompatActivity {
 
     private void setTextSize() {
         textSize = SPUtil.getTextSize(BrowerNewsActivity.this);
-        switch (textSize){
+        switch (textSize) {
             case 0:
                 settings.setTextSize(WebSettings.TextSize.LARGEST);
-            break;
+                break;
             case 1:
                 settings.setTextSize(WebSettings.TextSize.LARGER);
                 break;
@@ -201,7 +218,7 @@ public class BrowerNewsActivity extends AppCompatActivity {
             case android.R.id.home:
                 if (mWebView != null && mWebView.canGoBack()) {
                     mWebView.goBack();
-                }else{
+                } else {
                     finish();
                 }
                 break;

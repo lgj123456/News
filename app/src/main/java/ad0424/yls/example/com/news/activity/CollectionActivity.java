@@ -51,8 +51,6 @@ public class CollectionActivity extends AppCompatActivity {
                 .build());
 
         mSlideAndDragListView.setMenu(menu);
-
-
         mSlideAndDragListView.setOnMenuItemClickListener(new SlideAndDragListView.OnMenuItemClickListener() {
             @Override
             public int onMenuItemClick(View v, int itemPosition, int buttonPosition, int direction) {

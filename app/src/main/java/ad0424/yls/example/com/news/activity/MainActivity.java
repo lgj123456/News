@@ -24,6 +24,7 @@ import ad0424.yls.example.com.news.R;
 import ad0424.yls.example.com.news.adapter.MyFragmentAdapter;
 import ad0424.yls.example.com.news.fragment.MyFragment;
 import ad0424.yls.example.com.news.utils.SPUtil;
+import cn.bmob.v3.BmobUser;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -156,7 +157,13 @@ public class MainActivity extends AppCompatActivity {
         personItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "person", Toast.LENGTH_SHORT).show();
+                if (BmobUser.getCurrentUser() == null) {
+                    Toast.makeText(MainActivity.this, "亲，您还没登录，请先登录！！！", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                } else {
+
+                }
             }
         });
         resideMenu.addMenuItem(personItem, ResideMenu.DIRECTION_LEFT);
