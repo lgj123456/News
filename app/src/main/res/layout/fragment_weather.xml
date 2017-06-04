@@ -24,14 +24,27 @@
             android:text="气温走势  单位（℃）"
             />
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/chart"
+        <!--<com.github.mikephil.charting.charts.LineChart-->
+        <!--android:id="@+id/chart"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+
+        <!--/>-->
+        <HorizontalScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content">
 
-            />
+            <LinearLayout
+                android:layout_width="1200dp"
+                android:layout_height="wrap_content">
 
-
+                <ad0424.yls.example.com.news.view.TemperatureView
+                    android:id="@+id/temperatureView"
+                    android:layout_width="1200dp"
+                    android:layout_height="match_parent"
+                    />
+            </LinearLayout>
+        </HorizontalScrollView>
     </LinearLayout>
 
     <TextView
@@ -59,8 +72,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_margin="18dp"
+                android:orientation="vertical"
                 >
 
                 <ImageView
