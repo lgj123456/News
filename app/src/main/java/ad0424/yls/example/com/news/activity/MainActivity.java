@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 import ad0424.yls.example.com.news.R;
 import ad0424.yls.example.com.news.adapter.MyFragmentAdapter;
-import ad0424.yls.example.com.news.fragment.MainFragment;
+import ad0424.yls.example.com.news.fragment.Main2Fragment;
 import ad0424.yls.example.com.news.fragment.MyFragment;
 import ad0424.yls.example.com.news.fragment.WeatherFragment;
 import ad0424.yls.example.com.news.utils.SPUtil;
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 .setFontSize(8)
                 .setTabPadding(4, 6, 10)
                 .setChangeColor(Color.DKGRAY, Color.RED)
-                .addTabItem("新闻", R.mipmap.ic_launcher, MainFragment.class)
+                .addTabItem("新闻", R.mipmap.ic_launcher, Main2Fragment.class)
                 .addTabItem("天气", R.mipmap.ic_launcher, WeatherFragment.class)
                 .addTabItem("漫画", R.mipmap.ic_launcher, WeatherFragment.class)
                 .addTabItem("我的", R.mipmap.ic_launcher, WeatherFragment.class)
